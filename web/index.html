@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html data-ng-app="autoVpnStatApp">
+	<head>
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>autovpn</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<style>
+		h1 {
+			text-align: center;
+		}
+		</style>
+
+	</head>
+
+	<body data-ng-controller="AutoVpnStatCtrl">
+		<div class='container-fluid'>
+			<div class='navbar' style='background-color: #2d2d30; color: #ffffff;'>
+				<h1>Auto Vpn</h1>
+			</div>
+		</div>
+
+		<table width="100%">
+			<tr>
+				<td width="100%">
+					<table width="100%">
+						<tr ng-repeat="key in keys(ips)">
+							<td> <b> {{key}} </b>> </td>
+							<td>{{ips[key]}}</td>
+						</tr>
+					</table>
+				</td>>
+				<td width="50%">
+					<table width="100%">
+						<tr ng-repeat="key in keys(stats)">
+							<td> <b> {{key}} </b>> </td>
+							<td>{{stats[key]}}</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<br>
+		<div class='container-fluid'>
+				<div class='navbar' style='background-color: #2d2d30;color:#ffffff'>
+
+							<h4><center>Saii9</center></h4>
+				</div>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="web/app.js"></script>
+
+
+	</body>
+</html>

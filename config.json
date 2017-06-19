@@ -1,0 +1,9 @@
+{
+  "secret" : "RHXC4PAKKPD2CADFTCFNBYPTC2C6C2XT",
+  "username" : "sundeep.innamuri",
+  "password" : "Sundeep_7",
+  "guardSec" : 7,
+  "ovpn_file" : "client.ovpn",
+  "appLoc": "C:/\"Program Files\"/OpenVPN/bin/openvpn.exe",
+  "port":9001
+}
