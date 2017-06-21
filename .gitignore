@@ -1,3 +1,7 @@
 config1.json
 main.pyc
 client.ovpn
+resources/config.json
+resources/vpn.status
+resources/vpn.log
+resources/up

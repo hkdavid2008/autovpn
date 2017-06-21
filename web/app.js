@@ -6,8 +6,9 @@
 		var loadStats = function(){
             $http.get(protocol+'://'+ domain +'/stats').then(
                 function(response) {
-                    $scope.stats = JSON.loads(response.data).stats;
-                    $scope.ips = JSON.loads(response.data).ips;
+                    console.log(response.data);
+                    $scope.stats = response.data.stats;
+                    $scope.ips = response.data.ips;
                     console.log($scope.stats);
            });
         }
