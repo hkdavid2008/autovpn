@@ -1,5 +1,4 @@
 	var autoVpnStatApp = angular.module('autoVpnStatApp', []);
-	var stats = {};
     console.log("okay");
 	autoVpnStatApp.controller('AutoVpnStatCtrl', function($scope, $http, $interval) {
 
@@ -9,6 +8,7 @@
                     console.log(response.data);
                     $scope.stats = response.data.stats;
                     $scope.ips = response.data.ips;
+                    $scope.msgs = response.data.msgs;
                     console.log($scope.stats);
            });
         }

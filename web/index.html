@@ -28,6 +28,10 @@
 							<td align="center"> <b> {{key}} </b> </td>
 							<td align="center">{{ips[key]}}</td>
 						</tr>
+						<tr ng-repeat="key in keys(msgs)">
+							<td align="center"> <b> {{key}} </b> </td>
+							<td align="center">{{msgs[key]}}</td>
+						</tr>
 					</table>
 				</td>
 				<td width="40%" align="center">
