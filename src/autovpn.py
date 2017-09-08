@@ -1,3 +1,4 @@
+
 import pyotp
 import datetime
 import os
@@ -6,10 +7,11 @@ import time
 from flask import Flask
 from threading import Thread
 from multiprocessing import Process
+from multiprocessing import freeze_support
 import urllib2
 import signal, psutil
 import ssl
-
+import sys
 
 class ValidationError(Exception):
     def __init__(self, message, errors):
@@ -29,6 +31,7 @@ def getDataFromConf(key, mandatory = True):
     if mandatory and ( value is None or value == "" or value == [] or value == {}): raise ValidationError("cannot find a mandatory config "+ str(key), "NO_CONFIG")
     return value
 
+os.chdir(getDataFromConf("baseDir"))
 
 class logger():
 
@@ -40,6 +43,9 @@ class logger():
     }
 
     def __init__(self, logLevel):
+        self.logPath = getDataFromConf("logs")
+        if not os.path.exists(self.logPath): os.makedirs(self.logPath)
+        self.logFile = self.logPath + "/autovpn.log"
         if logLevel >=0 and logLevel <=3:
             self.logLevel = logLevel
         else: raise ValidationError("undefined level "+ str(logLevel), "UNKNOWN_LOG_LEVEL")
@@ -65,14 +71,18 @@ class logger():
         tolog = levelString
         for log in logs:
             tolog = tolog + " - " + str(log)
-        tolog = ts + tolog
+        tolog = ts + " - " + tolog
+
         if levelInt >= 1:
             msgs["timestamp"] = ts
             msgs["msg"] = tolog
-        if levelInt <= self.logLevel:  print tolog
+
+        if levelInt <= self.logLevel:
+            print tolog
+            with open(self.logFile, "a") as file:
+                file.write(tolog + "\n")
 
 log = logger(getDataFromConf("loglevel"))
-
 connectProc = None
 nmProc = None
 autoConnect = getDataFromConf("autoConnect")
@@ -147,7 +157,7 @@ def view():
 def monitor():
     stats = {}
     try:
-        f = open('resources/vpn.status', 'rU')
+        f = open(log.logPath + '/vpn.status', 'rU')
         for line in f.readlines():
             vals = line.split(",")
             if(len(vals)>1):
@@ -161,18 +171,21 @@ def monitor():
 def connect():
     log.info("connect", "new process", "connect")
     while(1):
-        if os.path.exists("vpn.log"):
+        if os.path.exists(log.logPath + "/vpn.log"):
             log.info("connect", "removing file", "vpn.log")
-            os.remove("vpn.log")
+            os.remove(log.logPath + "/vpn.log")
 
         with open("resources/up" , "w") as up:
             up.write(getDataFromConf("username")+"\n")
             up.write(getDataFromConf("password"))
             up.write(get_otp(getDataFromConf("guardSec")))
 
-        cmd = "{} --config {} --status resources/vpn.status 2 --auth-user-pass {} >> resources/vpn.log".format(getDataFromConf("appLoc"),
-                                                          "resources" + "/" + getDataFromConf("ovpn_file"),
-                                                          "resources/up")
+        cmd = "{} --config {} --status {}/vpn.status 2 --auth-user-pass {} >> {}/vpn.log".format(
+                                                            getDataFromConf("appLoc"),
+                                                            "resources" + "/" + getDataFromConf("ovpn_file"),
+                                                            log.logPath,
+                                                            "resources/up",
+                                                            log.logPath)
         log.info("connect", "issuing command", cmd)
         p = os.system(cmd)
 
@@ -187,12 +200,13 @@ def connect():
 def getExternalIp():
     try:
         gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-        return True, urllib2.urlopen("https://myexternalip.com/raw", context=gcontext).read().rstrip();
+        return True, urllib2.urlopen("http://ipv4bot.whatismyipaddress.com/", context=gcontext).read().rstrip();
     except Exception as e:
         return False, ""
 
 
 def detectNetworkChange():
+    global ips
     wlan = os.popen("netsh wlan show interfaces")
     lines = wlan.readlines()
     wlanStats = {}
@@ -269,7 +283,11 @@ def networkMonitor():
         time.sleep(sleepInterval)
 
 
-if __name__ == '__main__':
-    Thread(target = view).start()
-    networkMonitor()
+def main():
+    print "started"
+    Thread(target=view).start()
+    Thread(target=networkMonitor).start()
 
+if __name__ == '__main__':
+    freeze_support()
+    main()
