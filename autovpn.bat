@@ -4,8 +4,10 @@ SET apppath=D:\Other\autovpn
 %drive%:
 cd %apppath%
 
+IF EXIST "logs\autovpn.log" (
 del logs\autovpn.log
-python src\autovpn.py
+)
+C:\Python27\python.exe python\autovpn.py
 
 :: if exist dist\autovpn\autovpn.exe (
 :: echo "Build exist, Executing windows build"

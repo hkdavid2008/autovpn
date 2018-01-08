@@ -78,7 +78,7 @@ class logger():
             msgs["msg"] = tolog
 
         if levelInt <= self.logLevel:
-            print tolog
+            print(tolog)
             with open(self.logFile, "a") as file:
                 file.write(tolog + "\n")
 
@@ -101,6 +101,7 @@ def get_otp(gaurdSec):
     while not totp.verify(t, for_time=datetime.datetime.now()+ datetime.timedelta(seconds=gaurdSec)):
         time.sleep(gaurdSec)
         t = totp.now()
+    log.info("otp is ", t)
     return t
 
 
@@ -180,7 +181,7 @@ def connect():
             up.write(getDataFromConf("password"))
             up.write(get_otp(getDataFromConf("guardSec")))
 
-        cmd = "{} --config {} --status {}/vpn.status 2 --auth-user-pass {} >> {}/vpn.log".format(
+        cmd = "{} --config {} --status {}/vpn.status --auth-user-pass {} >> {}/vpn.log".format(
                                                             getDataFromConf("appLoc"),
                                                             "resources" + "/" + getDataFromConf("ovpn_file"),
                                                             log.logPath,
@@ -284,7 +285,7 @@ def networkMonitor():
 
 
 def main():
-    print "started"
+    print("started")
     Thread(target=view).start()
     Thread(target=networkMonitor).start()
 

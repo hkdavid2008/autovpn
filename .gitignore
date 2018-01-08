@@ -5,3 +5,6 @@ resources/config.json
 resources/vpn.status
 resources/vpn.log
 resources/up
+dist/
+build/
+logs/
